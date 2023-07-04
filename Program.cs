@@ -1,10 +1,18 @@
 ﻿using HRAdministrationAPI;
+using SchoolHRAdministration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SchoolHRAdministration
 {
+    public enum EmployeeType
+    {
+        Teacher,
+        HeadOfDepartment,
+        DeputyHeadMaster,
+        HeadMaster
+    }
     internal class Program
     {
         static void Main(string[] args)
@@ -26,8 +34,7 @@ namespace SchoolHRAdministration
 
             totalSalaries = employees.Sum(employee => employee.Salary); // nerede.neİslemYapilacak(kim => neyi)
             Console.WriteLine($"Total Annual Salaries (including bonus): {totalSalaries}");
-            
-
+            //Lambda ifadesi (Lambda expression), C# programlama dilinde anonim fonksiyonları ifade etmek için kullanılan bir yapıdır. Bir lambda ifadesi, bir veya daha fazla parametre alabilir, işlem yapabilir ve bir değer döndürebilir. Lambda ifadeleri genellikle LINQ sorguları veya fonksiyonel programlama yaklaşımları gibi durumlarda kullanılır. İşlevsel bir yaklaşımın bir parçası olarak, lambda ifadeleri fonksiyonları veri olarak ele almamızı ve kodumuzda işlevleri daha esnek ve kompakt bir şekilde kullanmamızı sağlar.
 
             Console.ReadKey();
 
@@ -36,6 +43,7 @@ namespace SchoolHRAdministration
 
         public static void SeedData(List<IEmployee> employees)        //IEmployee sınıfını argüman olarak kullanan bir liste SeedData metoduna argüman oldu. Metodun argüman olarak List<IEmployee> kullanmasının sebebi, daha genel bir arayüz olan IEmployee'ı temel alarak herhangi bir sınıfın bu metoda argüman olarak geçilebilmesini sağlamaktır. IEmployee arayüzü, EmployeeBase sınıfı tarafından uygulanmış olduğu için, EmployeeBase sınıfının bir örneği de IEmployee türüne atanabilir. Böylece, SeedData metodunun daha genel bir tipe bağımlı olması sağlanır ve farklı sınıfların uyumlu bir şekilde kullanılabilmesi mümkün hale gelir. Bu da kodun daha esnek ve genişletilebilir olmasını sağlar.
         {
+            /*
             IEmployee teacher1 = new Teacher    //new Teacher olmasına dikkat edilmelidir.
             {
                 Id = 1,
@@ -81,6 +89,23 @@ namespace SchoolHRAdministration
             employees.Add(headOfDepartment);
             employees.Add(deputyHeadMaster);
             employees.Add(headMaster);
+            */
+
+
+            IEmployee teacher1 = EmployeeFactory.GetEmployeeInstance(EmployeeType.Teacher, 1, "Bob", "Fisher", 40000);
+            employees.Add(teacher1);
+
+            IEmployee teacher2 = EmployeeFactory.GetEmployeeInstance(EmployeeType.Teacher, 2, "Jenny", "Thomas", 40000);
+            employees.Add(teacher2);
+
+            IEmployee headOfDepartment = EmployeeFactory.GetEmployeeInstance(EmployeeType.HeadOfDepartment, 3, "Brenda", "Mullins", 50000);
+            employees.Add(headOfDepartment);
+
+            IEmployee deputyHeadMaster = EmployeeFactory.GetEmployeeInstance(EmployeeType.DeputyHeadMaster, 4, "Delvin","Brown", 60000);
+            employees.Add(deputyHeadMaster);
+
+            IEmployee headMaster = EmployeeFactory.GetEmployeeInstance(EmployeeType.HeadMaster, 5, "Damien", "Jones", 80000);
+            employees.Add(headMaster);
         }
 
     }
@@ -106,6 +131,34 @@ public class HeadMaster : EmployeeBase
     public override decimal Salary { get => base.Salary + (base.Salary * 0.05m); }
 }
 
+public static class EmployeeFactory
+{
+    public static IEmployee GetEmployeeInstance(EmployeeType employeeType, int id, string firstName, string lastName, decimal salary)
+    {
+        IEmployee employee = null;
+
+        switch (employeeType)
+        {
+            case EmployeeType.Teacher:
+                employee = new Teacher {Id = id, FirstName = firstName, LastName = lastName, Salary = salary};
+                break;
+            case EmployeeType.HeadOfDepartment:
+                employee = new HeadOfDepartment { Id = id, FirstName = firstName, LastName = lastName, Salary = salary };
+                break;
+            case EmployeeType.DeputyHeadMaster:
+                employee = new DeputyHeadMaster { Id = id, FirstName = firstName, LastName = lastName, Salary = salary };
+                break;
+            case EmployeeType.HeadMaster:
+                employee = new HeadMaster { Id = id, FirstName = firstName, LastName = lastName, Salary = salary };
+                break;
+            default:
+                break;
+        }
+
+        return employee;
+    }
+}
+
 
 
 
@@ -120,7 +173,11 @@ public class HeadMaster : EmployeeBase
 * Foreach metodu ile tüm kayıtların toplanması ve değişkene eklenmesi sağlandı.
 * Uzun yol olan bu yöntem yorum satırına alındı.
 * Kısa yöntem olan LINQ sorgusu için using satırı eklendi.
-* 
+* Lambda expression yazıldı.
+* EmployeeType enumı tanımlandı.
+* EmployeeFactory sınıfı oluşturuldu.
+* GetEmployeeInstance metodu oluşturuldu ve içeriği argümanları ile birlikte dolduruldu.
+* SeedData metodunun içerisi yeni eklenen GetEmployeeInstance metoduna göre yeniden düzenlendi
 * 
 * +++++++++++++++++++++++++++
 * 
